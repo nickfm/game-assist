@@ -1,0 +1,34 @@
+<template name="join">
+  <div class="login-wrapper">
+    <h2>You're making a great choice to join!</h2>
+    <form>
+      {{#if errorMessages}}
+        <ul class="list-errors">
+          {{#each errorMessages}}
+            <li class="list-item">{{this}}</li>
+          {{/each}}
+        </ul>
+      {{/if}}
+
+      <div class="{{errorClass 'email'}}">
+        <input type="email" name="email" placeholder="Email" />
+      </div>
+
+      <div class="{{errorClass 'username'}}">
+        <input type="text" name="username" placeholder="Username" />
+      </div>
+
+      <div class="{{errorClass 'password'}}">
+        <input type="password" name="password" placeholder="Password" />
+      </div>
+
+      <div class="{{errorClass 'confirm'}}">
+        <input type="password" name="confirm" placeholder="Confirm Password" />
+      </div>
+
+      <button type="submit" class="btn btn-primary">Join</button>
+    </form>
+
+    <a href="{{pathFor 'login'}}">Have an account? Sign In.</a>
+  </div>
+</template>

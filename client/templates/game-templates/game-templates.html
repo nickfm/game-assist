@@ -1,0 +1,10 @@
+<template name="gameTemplates">
+    <ul>
+        {{#each gameTemplates}}
+          <li>{{> gameTemplage}}</li>
+        {{else}}
+          <li>No game templates created yet.</li>
+        {{/each}}
+    </ul>
+    <a href="{{pathFor 'game-templates.new'}}" class="btn btn-primary">New Template</a>
+</template>

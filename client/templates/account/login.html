@@ -1,0 +1,26 @@
+<template name="login">
+  <div class="login-wrapper">
+    <h2>You must sign into the app first.</h2>
+    <form novalidate>
+      {{#if errorMessages}}
+        <ul class="list-errors">
+          {{#each errorMessages}}
+            <li class="list-item">{{this}}</li>
+          {{/each}}
+        </ul>
+      {{/if}}
+
+      <div class="{{errorClass 'login'}}">
+        <input type="email" name="login" placeholder="Email/Username" />
+      </div>
+
+      <div class="{{errorClass 'password'}}">
+        <input type="password" name="password" placeholder="Password" />
+      </div>
+
+      <button type="submit" class="btn btn-primary">Sign in</button>
+    </form>
+
+    <a href="{{pathFor 'join'}}">Need an account? Join Now.</a>
+  </div>
+</template>

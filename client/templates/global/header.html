@@ -1,0 +1,20 @@
+<template name="header">
+  <header class="navbar navbar-static-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a href="#" class="navbar-brand">
+          GA <!-- Game Assist -->
+        </a>
+        <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav">
+          <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+        </button>
+      </div>
+      {{#if currentUser}}
+        <nav id="main-nav" class="collapse navbar-collapse">
+          {{> mainNav}}
+          {{> accountControls}}
+        </nav>
+      {{/if}}
+    </div>
+  </header>
+</template>

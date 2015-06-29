@@ -1,0 +1,10 @@
+<template name="games">
+    <ul>
+        {{#each games}}
+          <li>{{> game}}</li>
+        {{else}}
+          <li>You have no games yet.</li>
+        {{/each}}
+    </ul>
+    
+</template>

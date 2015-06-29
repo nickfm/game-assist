@@ -1,0 +1,21 @@
+<template name="mainNav"><ul class="nav navbar-nav">
+  <li class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+      Games <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <li><a href="{{pathFor 'games'}}">My Games</a></li>
+      <li><a href="#">New Game</a></li>
+    </ul>
+  </li>
+  <li class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+      Game Templates <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <li><a href="{{pathFor 'game-templates'}}">Browse Game Templates</a></li>
+      <li><a href="#">My Game Templates</a></li>
+      <li><a href="#">New Game Template</a></li>
+    </ul>
+  </li>
+</ul></template>

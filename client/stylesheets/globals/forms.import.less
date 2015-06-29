@@ -1,0 +1,23 @@
+form {
+  .required {
+    label:not(.radio-inline) {
+      &:after {
+        content: '*';
+        margin-left: 2px;
+      }
+    }
+  }
+
+  [data-toggle="collapse"] {
+    i {
+      font-size: 0.6em;
+      .transition(all .3s ease);
+    }
+
+    &.collapsed {
+      i {
+        .rotate(-90deg);
+      }
+    }
+  }
+}
