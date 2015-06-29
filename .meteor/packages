@@ -12,3 +12,4 @@ twbs:bootstrap
 mrt:lesshat-prefixed
 reactive-var
 reactive-dict
+jquery

@@ -67,8 +67,12 @@
         Player Fields <i class="glyphicon glyphicon-menu-down"></i>
       </legend>
       <div id="playerFields">
-        {{> playerFieldForm}}
-        <button type="button" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-plus"></i> Add Field</button>
+        {{#each playerFields}}
+          {{> playerFieldForm}}
+        {{else}}
+          <p>No fields added yet.</p>
+        {{/each}}
+        <button id="add-player-field" type="button" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-plus"></i> Add Field</button>
       </div>
     </fieldset>
     <button type="submit" class="btn btn-primary btn-block btn-lg">Create</button>
