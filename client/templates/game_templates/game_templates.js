@@ -1,6 +1,13 @@
-Template.games.helpers({
+Template.gameTemplates.onCreated(function() {
+  this.state = new ReactiveDict();
+  this.state.set('includeOwn', false);
+});
+
+Template.gameTemplates.helpers({
   gameTemplates: function() {
-    // TODO: Only user's games
-    return GameTemplates.find().sort({ createdAt: -1 });
+    return GameTemplates.find({});
+  },
+  includeOwn: function() {
+    return Template.instance().state.get('includeOwn');
   }
 });

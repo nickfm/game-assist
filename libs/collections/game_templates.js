@@ -1,80 +1,204 @@
 GameTemplates = new Mongo.Collection("gameTemplates");
 
-Meteor.methods({
-  addGameTemplate: function(attrs) {
-  },
+// Meteor.methods({
+//   addGameTemplate: function(attrs) {
+//     var user = Meteor.user(),
+//         required = { createdBy: user._id,
+//                      createdByUsername: user.username,
+//                      createdAt: new Date() }
+//         template = _.extend(attrs, required);
 
-  updateGameTemplate: function(id, attrs) {
-    if( Games.find({ gameTemplateId: id }) ) {
-      // clone original and create new to create/maintain versioning
-    } else {
-      // go ahead and update original, it's not being used
+//     console.log(template);
+
+//     //return GameTemplates.insert(template);
+//   },
+
+//   updateGameTemplate: function(id, attrs) {
+//     if( Games.find({ gameTemplateId: id }) ) {
+//       // clone original and create new to create/maintain versioning
+//     } else {
+//       // go ahead and update original, it's not being used
+//     }
+//   },
+
+//   removeGameTemplate: function(id) {
+//     GameTemplates.remove(id);
+//   }
+// });
+
+var GameSettingsSchema = new SimpleSchema({
+  maxPlayers: {
+    type: Number,
+    label: 'Max # of Players',
+    optional: true
+  },
+  scoreLabel: {
+    type: String,
+    label: 'Label for Main Score',
+    optional: true
+  },
+  scoreType: {
+    type: String,
+    label: 'Scoring Type',
+    allowedValues: ['manual', 'tally'],
+    defaultValue: 'manual',
+    autoform: {
+      options: function() {
+        return [
+          { label: 'Manual', value: 'manual' },
+          { label: 'Tally of Counters', value: 'tally' }
+        ]
+      }
     }
   },
-
-  removeGameTemplate: function(id) {
-    GameTemplates.remove(id);
+  scoreDefault: {
+    type: Number,
+    label: 'Starting Score',
+    optional: true,
+    autoValue: function() {
+      var type = this.field('scoreType');
+      if(type.isSet && type.value === 'tally') {
+        this.unset(); // no need for this when using tally scoring type
+      } else {
+        if(!this.isSet) return 0;
+      }
+    }
+  },
+  scorePrefix: { // ex: "$"
+    type: String,
+    label: 'Score Prefix (max 2 characters)',
+    optional: true,
+    max: 2
+  },
+  hideNonUserPlayers: {
+    type: Boolean,
+    label: 'Hide Non-user Players',
+    defaultValue: false
   }
 });
-    
-/*
-  {
-    _id: MongoId,
-    name: String,
-    description: String,
-    createdBy: MongoID(users),
-    createdAt: Timestamp,
-    isPublic: Boolean,              // default true
-    tags: [],                       // name of game, game version (i.e. DnD v4)
-    gameSettings: {
-      maxPlayers: Int,
-      scoreLabel: String,           // optional
-      scoringType: String,          // manual or tally (of counters)
-      scoreDefault: Int,            // overridden if tally scoring type
-      scorePrefix: String,          // ex: "$"
-      hideNonUserPlayers: Boolean   // allows owner to hide non-user players from user players
-    },
-    playerFields: [
-      //*************************************************
-        fields defined by creator including: name, abbreviation, type, permission, initial/default value
-        name: String,
-        abbreviation: String,
-        type: String, (dropdown)
-            number       - attributes (str/dex/int/etc...)
-            counter      - like number, but adds new fields
-                            - icon: for now hex color, eventually img
-                            - scoreMultiplier: used when scoreType is tally (defaults to 1)
-            dropdown     - race, class
-            text         - notes
-        permission: String, (dropdown)
-            open         - Any player can edit
-            restricted   - Owner can edit all + Players can edit their own info
-            secure       - Only the game owner can edit field
-        default: String
-      //*************************************************
-    ],
-    addOns: [ MongoIds... ],
 
-    // versioning (doubly linked list)
-    previousVersion: MongoId(gameTempaltes),
-    nextVersion: MongoID(gameTemplates),
-    replacedOn: Timestamp
+var PlayerFieldSchema = new SimpleSchema({
+  name: {
+    type: String,
+    label: 'Name'
+  },
+  abbreviation: {
+    type: String,
+    label: 'Abbreviation',
+    max: 3,
+    optional: true
+  },
+  type: {
+    type: String,
+    label: 'Type',
+    allowedValues: ['number', 'counter', 'choice', 'text'],
+    defaultValue: 'number',
+    autoform: {
+      options: function() {
+        return [
+          { label: 'Number', value: 'number' },
+          { label: 'Counter', value: 'counter' },
+          { label: 'Choice', value: 'choice' },
+          { label: 'Text', value: 'text' }
+        ]
+      }
+    }
+  },
+  permission: {
+    type: String,
+    label: 'Edit Permissions',
+    allowedValues: ['open', 'restricted', 'secure'],
+    defaultValue: 'restricted',
+    autoform: {
+      options: function() {
+        return [
+          { label: 'Open', value: 'open' },
+          { label: 'Restricted', value: 'restricted' },
+          { label: 'Secure', value: 'secure' }
+        ]
+      }
+    }
+  },
+  defaultValue: {
+    type: String,
+    label: 'Default Value',
+    optional: true
+  },
+  // if type = Counter
+  scoreMultiplier: {
+    type: Number,
+    label: 'Score Multiplier',
+    optional: true
+  },
+  icon: {
+    // TODO: Allow images, for now, just hex color
+    type: String,
+    label: 'Hex color for icon (ex. #ff0000)',
+    optional: true
+  },
+  // if type = Choice
+  choices: {
+    type: String,
+    label: 'Choices'
   }
+});
 
+GameTemplates.attachSchema(new SimpleSchema({
+  name: {
+    type: String,
+    label: 'Name',
+    max: 100
+  },
+  description: {
+    type: String,
+    label: 'Description',
+    max: 1000,
+    optional: true
+  },
+  created: {
+    type: UserAuditSchema
+  },
+  isPublic: {
+    type: Boolean,
+    label: 'Make template public',
+    defaultValue: true
+  },
+  tags: {
+    type: [String],
+    label: 'Tags',
+    optional: true
+  },
+  gameSettings: {
+    type: GameSettingsSchema
+  },
+  playerFields: {
+    type: [PlayerFieldSchema]
+  },
+  addOns: {
+    type: [String],
+    label: 'Include Add Ons',
+    optional: true
+  }
+  /*
+  TODO: Add versioning?
+  */
+}));
+
+/*
   //**********************
   // Examples
   //**********************
   // Simple MTG:
     {
       name: "Basic MTG Chaos/FFA",
-        tags: ["mtg", "magic the gathering", "chaos", "ffa"],
-        description: "Basic MTG Chaos/FFA game tracker. Starting life: 30. Includes poison counters."
-        gameSettings: {
-          scoringType: "manual",
-          scoreLabel: "Life"
-          scoreDefault: 30,
-          hideNUPs: false
-        },
+      tags: ["mtg", "magic the gathering", "chaos", "ffa"],
+      description: "Basic MTG Chaos/FFA game tracker. Starting life: 30. Includes poison counters."
+      gameSettings: {
+        scoringType: "manual",
+        scoreLabel: "Life"
+        scoreDefault: 30,
+        hideNUPs: false
+      },ß
       playerFields: [
         { name: "Poison", type: "counter", default: "0", icon: "#339900",
           permission: "restricted"}

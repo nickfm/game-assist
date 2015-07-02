@@ -22,36 +22,37 @@ Meteor.methods({
   },
 
   getPlayerFields: function(id) {
-    game = Game.findOne(id);
+    var game = Game.findOne(id);
     if(!game) throw new Meteor.Error(404, "Game not found.");
 
-    gameTemplate = GameTemplates.findOne(game.gameTemplateId);
+    var gameTemplate = GameTemplates.findOne(game.gameTemplateId);
     if(!gameTemplate) throw new Meteor.Error(404, "Game Template not found.");
 
     return gameTemplate.playerFields;
   },
 
   addPlayer: function(gameId, attrs, user) {
+    var defaults, userInfo;
     // TODO: Validate attrs
 
     // Default fields
     defaults = { _id: new Meteor.Collection.ObjectID(),
-                 createdAt: new Date() }
+                 createdAt: new Date() };
     // User fields from app user, if present
     if(user) {
-      users = { userId: user._id,
+      userInfo = { userId: user._id,
                 name: user.username }
     } else {
-      users = { }
+      userInfo = { }
     }
-    _.extend(attrs, defaults, users);
+    _.extend(attrs, defaults, userInfo);
 
     Games.update(gameId, { $push: { players: attrs } });
   },
 
   updatePlayer: function(gameId, id, attrs) {
     // prep attrs
-    playerAttrs = { }
+    var playerAttrs = { };
     _.each(attrs, function(val, key) { playerAttrs["'players.$." + key + "'"] = val; });
 
     Games.update({ _id: gameId, 'players._id': id },
