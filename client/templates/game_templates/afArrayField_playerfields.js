@@ -14,7 +14,7 @@ Template.playerFieldForm.helpers({
         choices = (AutoForm.getFieldValue(fieldName, form.id) || '').split('\n');
 
     return choices.map(function(choice) {
-                      return {label: choice, value: choice};
+                      return { label: choice, value: choice };
                     });
   },
   isType: function(type) {

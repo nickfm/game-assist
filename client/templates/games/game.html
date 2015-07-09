@@ -1,0 +1,47 @@
+<template name="game">
+  <div class="game">
+    <h2>{{name}}</h2>
+    <div class="list-group">
+      {{#if canJoin}}
+        <div class="list-group-item">
+          <a href="#" class="btn btn-primary btn-block btn-lg ap-toggle join">Join Game</a>
+        </div>
+      {{/if}}
+      {{#if isOwner}}
+        <div class="list-group-item">
+          <a href="#" class="btn btn-default qr-toggle">Show Join Code</a>
+          <a href="#" class="btn btn-default ap-toggle">Add Non-user Player</a>
+          <a href="#" class="btn btn-default start-game">Start Game</a>
+          <a href="#" class="btn btn-default lock-game">Lock User Joining</a>
+        </div>
+      {{/if}}
+    </div>
+    <div id="players" class="list-group">
+      {{#each playersToShow}}
+        {{> player}}
+      {{else}}
+        <div class="list-group-item">No players yet.</div>  
+      {{/each}}
+    </div>
+    {{#if isOwner}}
+      {{> qrCode}}
+    {{/if}}
+    {{> initPlayerForm}}
+  </div>
+</template>
+
+<template name="initPlayerForm">
+  {{#autoForm schema=initPlayerSchema id="init-player-form" type="method" meteormethod="addPlayer" class="overlay" validation="none"}}
+    {{> afQuickField class="input-lg" name="name"}}
+    {{> afQuickField type="hidden" name="userId"}}
+    <button type="submit" class="btn btn-primary btn-lg">Create</button>
+    <button class="btn btn-default btn-lg ap-toggle">Cancel</button>
+  {{/autoForm}}
+</template>
+
+<template name="qrCode">
+  <div id="game-qrcode" class="overlay">
+    <div class="code"></div>
+    <a href="#" class="btn btn-primary btn-block btn-lg qr-toggle">Hide</a>
+  </div>
+</template>

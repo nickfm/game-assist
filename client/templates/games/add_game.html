@@ -1,6 +1,15 @@
 <template name="addGame">
-  <form>
-    <input type="text" name="name" placeholder="Name" />
-    <input type="text" name="game_template" placeholder="Search for a Game Template" />
-  </form>
+  <h2>New game</h2>
+  {{#autoForm collection="Games" id="add-game" type="method" meteormethod="addGame" validation="none"}}
+    <fieldset>
+      <legend data-toggle="collapse" data-target="#gameInfoFields">
+        Game Info <i class="glyphicon glyphicon-menu-down"></i>
+      </legend>
+      <div id="gameInfoFields" class="collapse-in collapse in">
+        {{> afQuickField name="name"}}
+        {{> afQuickField name="gameTemplate.id" type="select" options=gameTemplateOptionsHelper}}
+      </div>
+    </fieldset>
+    <button type="submit" class="btn btn-primary btn-block btn-lg">Create</button>
+  {{/autoForm}}
 </template>

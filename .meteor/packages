@@ -16,3 +16,6 @@ jquery
 aldeed:collection2
 aldeed:autoform
 ongoworks:security
+mrt:flash-messages
+erasaur:meteor-lodash
+steeve:jquery-qrcode

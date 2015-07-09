@@ -1,0 +1,113 @@
+.game {
+  position: relative;
+}
+
+#game-qrcode {
+  .code, .btn {    
+    width: 90%;
+    max-width: 300px;
+  }
+
+  .btn {
+    margin: 0 auto;
+  }
+
+  .code {
+    margin: 10px auto;
+
+    canvas {
+      width: 100%;
+    }
+  }
+}
+
+#init-player-form {
+  text-align: center;
+  padding: 4% 10%;
+
+  .btn {
+    margin: 0 2%;
+    width: 40%;
+  }
+}
+
+#players {
+
+  .player {
+    position: relative;
+    padding: 0;
+
+    .info {
+
+      .toggle {
+        float: left;
+        cursor: pointer;
+        font-size: 2em;
+        height: 50px;
+        width: 5%;
+        text-align: center;
+      }
+
+      .player-name {
+        width: 75%;
+        float: left;
+        font-size: 2em;
+        font-weight: bold;
+        padding-left: 5px;
+
+        span {
+          display: block;
+          line-height: 50px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        input {
+          display: none;
+        }
+      }
+
+      .template-fields {
+        clear: both;
+        margin: 0;
+
+        .spacer {
+          clear: both;
+          height: 15px;
+        }
+      }
+    }
+
+    .score-container {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 20%;
+      height: 50px;
+      border-left: 1px solid #ddd;
+
+      .score {
+        display: table;
+        width: 100%;
+        height: 100%;
+        font-size: 2em;
+        font-weight: bold;
+      
+        span {
+          display: table-cell;
+          vertical-align: top;
+          text-align: center;
+          line-height: 50px;
+        }
+      }
+    }
+
+    &.expanded {
+      .score-container {
+        border-bottom: 1px solid #ddd;
+        .border-radius(0 0 0 4px);
+      }
+    }
+  }
+}

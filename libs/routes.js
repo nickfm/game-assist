@@ -13,8 +13,7 @@ Router.configure({
   loadingTemplate: loadingLayout,
   notFoundTemplate: notFoundLayout,
   waitOn: function() {
-    return [ Meteor.subscribe('games'),
-             Meteor.subscribe('gameTemplates') ];
+    return [ Meteor.subscribe('games'), Meteor.subscribe('gameTemplates') ];
   }
 });
 
@@ -24,6 +23,7 @@ Router.onBeforeAction(function() {
       if (Meteor.loggingIn()) {
         this.render(this.loadingTemplate);
       } else {
+        Session.set('postAuthRedirect', this.url );
         this.redirect(notAuthorizedRoute);
       }
     } else {
@@ -80,3 +80,25 @@ Router.route('game-templates/:_id', {
   Games
 /************************/
 Router.route('games');
+
+// new
+Router.route('games/new', {
+  name: 'games.new',
+  action: function () {
+    this.render('addGame');
+  }
+});
+
+// show
+Router.route('games/:_id', {
+  name: 'games.show',
+  action: function() {
+    this.render('game');
+  },
+  waitOn: function() {
+    return Meteor.subscribe('singleGame', this.params._id);
+  },
+  data: function() {
+    return Games.findOne(this.params._id);
+  }
+});

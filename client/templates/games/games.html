@@ -1,10 +1,15 @@
 <template name="games">
-    <ul>
+    <div class="list-group">
         {{#each games}}
-          <li>{{> game}}</li>
+          <a href="{{pathFor 'games.show'}}" class="list-group-item">{{> gameListItem}}</a>
         {{else}}
-          <li>You have no games yet.</li>
+          <div class="list-group-item">You have no games yet.</div>
         {{/each}}
-    </ul>
-    
+    </div>
+    <a href="{{pathFor 'games.new'}}" class="btn btn-primary">New Game</a>
+</template>
+
+<template name="gameListItem">
+  <h4>{{name}}</h4>
+  <h5>Created by: {{created.username}}</h5>
 </template>

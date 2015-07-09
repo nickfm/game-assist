@@ -1,14 +1,41 @@
 <template name="gameTemplates">
-    <ul>
+    <!-- <div class="filters navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <div class="navbar-brand">Filters: </div>
+        </div>
+        <ul class="nav navbar-nav">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Show: <strong>{{filters.show.label}}</strong> <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li class="{{activeClass filters.show.value 'all'}}"><a href="#" data-filter="show=">All</a></li>
+              <li class="{{activeClass filters.show.value 'others'}}"><a href="#" data-filter="show=others">Only Others'</a></li>
+              <li class="{{activeClass filters.show.value 'my'}}"><a href="#" data-filter="show=my">Only Mine</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Limit: <strong>{{filters.limit}}</strong> <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li class="{{activeClass filters.limit '10'}}"><a href="#" data-filter="limit=10">10</a></li>
+              <li class="{{activeClass filters.limit '20'}}"><a href="#" data-filter="limit=20">20</a></li>
+              <li class="{{activeClass filters.limit '50'}}"><a href="#" data-filter="limit=50">50</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div> -->
+    <div class="list-group">
         {{#each gameTemplates}}
-          <li>{{> gameTemplateListItem}}</li>
+          <div class="list-group-item">{{> gameTemplateListItem}}</div>
         {{else}}
-          <li>No game templates created yet.</li>
+          <div class="list-group-item">No public game templates available.</div>
         {{/each}}
-    </ul>
+    </div>
     <a href="{{pathFor 'gameTemplates.new'}}" class="btn btn-primary">New Template</a>
 </template>
 
 <template name="gameTemplateListItem">
-  <a href="{{pathFor 'gameTemplates.show'}}">{{name}}</a>
+  <h4>{{name}}</h4>
+  <h5>Created by: {{created.username}}</h5>
+  <a href="{{pathFor 'gameTemplates.show'}}">(details)</a>
 </template>

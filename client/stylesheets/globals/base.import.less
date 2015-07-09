@@ -1,3 +1,9 @@
+#main {
+  position: relative;
+  padding-top: 2%;
+  padding-bottom:  2%;
+}
+
 .panel-heading {
   position: relative;
 
@@ -5,5 +11,26 @@
     position: absolute;
     right: 10px;
     top: 6px;
+  }
+}
+
+.navbar {
+  margin-bottom: 0;
+}
+
+.error-page {
+  text-align: center;
+}
+
+[data-toggle="collapse"] {
+  i {
+    font-size: 0.6em;
+    .transition(all .3s ease);
+  }
+
+  &.collapsed {
+    i {
+      .rotate(-90deg);
+    }
   }
 }

@@ -1,31 +1,5 @@
 GameTemplates = new Mongo.Collection("gameTemplates");
 
-// Meteor.methods({
-//   addGameTemplate: function(attrs) {
-//     var user = Meteor.user(),
-//         required = { createdBy: user._id,
-//                      createdByUsername: user.username,
-//                      createdAt: new Date() }
-//         template = _.extend(attrs, required);
-
-//     console.log(template);
-
-//     //return GameTemplates.insert(template);
-//   },
-
-//   updateGameTemplate: function(id, attrs) {
-//     if( Games.find({ gameTemplateId: id }) ) {
-//       // clone original and create new to create/maintain versioning
-//     } else {
-//       // go ahead and update original, it's not being used
-//     }
-//   },
-
-//   removeGameTemplate: function(id) {
-//     GameTemplates.remove(id);
-//   }
-// });
-
 var GameSettingsSchema = new SimpleSchema({
   maxPlayers: {
     type: Number,
@@ -57,10 +31,10 @@ var GameSettingsSchema = new SimpleSchema({
     optional: true,
     autoValue: function() {
       var type = this.field('scoreType');
-      if(type.isSet && type.value === 'tally') {
+      if (type.isSet && type.value === 'tally') {
         this.unset(); // no need for this when using tally scoring type
       } else {
-        if(!this.isSet) return 0;
+        if (!this.isSet) return 0;
       }
     }
   },
@@ -70,10 +44,34 @@ var GameSettingsSchema = new SimpleSchema({
     optional: true,
     max: 2
   },
+  scorePermission: {
+    type: String,
+    label: 'Score Editting Permissions',
+    allowedValues: ['open', 'restricted', 'secure', 'closed'],
+    optional: true,
+    autoValue: function() {
+      var type = this.field('scoreType');
+      if (type.isSet && type.value === 'tally') {
+        return 'closed'; // not even game owner can edit via UI
+      } else {
+        if (!this.isSet) return 'restricted';        
+      }
+    },
+    autoform: {
+      options: function() {
+        return [
+          { label: 'Open', value: 'open' },
+          { label: 'Restricted', value: 'restricted' },
+          { label: 'Secure', value: 'secure' }
+        ]
+      }
+    }
+  },
   hideNonUserPlayers: {
     type: Boolean,
     label: 'Hide Non-user Players',
-    defaultValue: false
+    defaultValue: false,
+    optional: true
   }
 });
 
@@ -81,6 +79,7 @@ var PlayerFieldSchema = new SimpleSchema({
   name: {
     type: String,
     label: 'Name'
+    // TODO: validate unique field names
   },
   abbreviation: {
     type: String,
@@ -125,21 +124,40 @@ var PlayerFieldSchema = new SimpleSchema({
     optional: true
   },
   // if type = Counter
+  useForScore: {
+    type: Boolean,
+    label: 'Use field to calculate tally score',
+    optional: true
+  },
   scoreMultiplier: {
     type: Number,
     label: 'Score Multiplier',
-    optional: true
+    optional: true,
+    autoValue: function() {
+      var isCounterType = this.siblingField('type').value === 'counter',
+          useForScore = this.siblingField('useForScore').value === true;
+      if (isCounterType && useForScore && !this.isSet) {
+        return 0;
+      }
+    }
   },
   icon: {
     // TODO: Allow images, for now, just hex color
     type: String,
-    label: 'Hex color for icon (ex. #ff0000)',
+    label: 'Icon color',
     optional: true
   },
   // if type = Choice
   choices: {
     type: String,
-    label: 'Choices'
+    label: 'Choices',
+    optional: true,
+    custom: function() {
+      var isChoiceType = this.siblingField('type').value === 'choice';
+      if (isChoiceType && !this.isSet && (!this.operator || (this.value === null || this.value === ""))){
+        return 'required';
+      }
+    }
   }
 });
 
@@ -161,7 +179,8 @@ GameTemplates.attachSchema(new SimpleSchema({
   isPublic: {
     type: Boolean,
     label: 'Make template public',
-    defaultValue: true
+    defaultValue: true,
+    optional: true
   },
   tags: {
     type: [String],
@@ -172,7 +191,8 @@ GameTemplates.attachSchema(new SimpleSchema({
     type: GameSettingsSchema
   },
   playerFields: {
-    type: [PlayerFieldSchema]
+    type: [PlayerFieldSchema],
+    optional: true
   },
   addOns: {
     type: [String],
@@ -183,6 +203,16 @@ GameTemplates.attachSchema(new SimpleSchema({
   TODO: Add versioning?
   */
 }));
+
+// Meteor.methods({
+//   updateGameTemplate: function(id, attrs) {
+//     if ( Games.find({ gameTemplateId: id }) ) {
+//       // clone original and create new to create/maintain versioning
+//     } else {
+//       // go ahead and update original, it's not being used
+//     }
+//   },
+// });
 
 /*
   //**********************
@@ -198,9 +228,9 @@ GameTemplates.attachSchema(new SimpleSchema({
         scoreLabel: "Life"
         scoreDefault: 30,
         hideNUPs: false
-      },ß
+      },
       playerFields: [
-        { name: "Poison", type: "counter", default: "0", icon: "#339900",
+        { name: "Poison Counters", type: "counter", default: "0", icon: "#339900",
           permission: "restricted"}
       ]
     }
@@ -217,19 +247,19 @@ GameTemplates.attachSchema(new SimpleSchema({
       },
       playerfields: [
         { name: "$5", type: "counter", default: "15", permission: "secure",
-          icon: "#fffff", scoreMultiplier: 5 },
+          icon: "#ffffff", useForScore: true, scoreMultiplier: 5 },
 
         { name: "$10", type: "counter", default: "10", permission: "secure",
-          icon: "#ff000", scoreMultiplier: 10 },
+          icon: "#ff0000", useForScore: true, scoreMultiplier: 10 },
 
         { name: "$25", type: "counter", default: "5", permission: "secure",
-          icon: "#339900", scoreMultiplier: 25 },
+          icon: "#339900", useForScore: true, scoreMultiplier: 25 },
 
         { name: "$100", type: "counter", default: "7", permission: "secure",
-          icon: "#0000cc", scoreMultiplier: 100 },
+          icon: "#0000cc", useForScore: true, scoreMultiplier: 100 },
           
         { name: "$500", type: "counter", default: "2", permission: "secure",
-          icon: "#000000", scoreMultiplier: 500 },
+          icon: "#000000", useForScore: true, scoreMultiplier: 500 },
       ]
     }
 

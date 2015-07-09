@@ -1,34 +1,38 @@
 <template name="join">
-  <div class="login-wrapper">
-    <h2>You're making a great choice to join!</h2>
-    <form>
-      {{#if errorMessages}}
+  <div class="login-wrapper panel panel-default">
+    <div class="panel-heading">
+      <h2 class="panel-title">You're making a great choice to join!</h2>
+    </div>
+    <div class="panel-body">
+    <form novalidate>
+        {{#if errorMessages}}
         <ul class="list-errors">
           {{#each errorMessages}}
-            <li class="list-item">{{this}}</li>
+          <li class="list-item">{{this}}</li>
           {{/each}}
         </ul>
-      {{/if}}
+        {{/if}}
 
-      <div class="{{errorClass 'email'}}">
-        <input type="email" name="email" placeholder="Email" />
-      </div>
+        <div class="form-group {{errorClass 'email'}}">
+          <input class="form-control" type="email" name="email" placeholder="Email" />
+        </div>
 
-      <div class="{{errorClass 'username'}}">
-        <input type="text" name="username" placeholder="Username" />
-      </div>
+        <div class="form-group {{errorClass 'username'}}">
+          <input class="form-control" type="text" name="username" placeholder="Username" />
+        </div>
 
-      <div class="{{errorClass 'password'}}">
-        <input type="password" name="password" placeholder="Password" />
-      </div>
+        <div class="form-group {{errorClass 'password'}}">
+          <input class="form-control" type="password" name="password" placeholder="Password" />
+        </div>
 
-      <div class="{{errorClass 'confirm'}}">
-        <input type="password" name="confirm" placeholder="Confirm Password" />
-      </div>
+        <div class="form-group {{errorClass 'confirm'}}">
+          <input class="form-control" type="password" name="confirm" placeholder="Confirm Password" />
+        </div>
 
-      <button type="submit" class="btn btn-primary">Join</button>
-    </form>
+        <button type="submit" class="btn btn-primary">Join</button>
+      </form>
 
-    <a href="{{pathFor 'login'}}">Have an account? Sign In.</a>
+      <a href="{{pathFor 'login'}}">Have an account? Sign In.</a>
+    </div>
   </div>
 </template>

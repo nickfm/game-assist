@@ -31,8 +31,16 @@
           {{/if}}
 
           {{#if isType "counter"}}
-            {{> afQuickField name=defaultValue type="number"}}
-            {{> afQuickField name=scoreMultiplier type="number"}}
+            {{> afQuickField name=icon}}
+            {{> afQuickField name=defaultValue type="number" label="Default Count"}}
+            {{#if afFieldValueIs name="gameSettings.scoreType" value="tally"}}
+              {{> afQuickField name=useForScore value=true}}
+
+              {{#if afFieldValueIs name=useForScore value=true}}
+                {{> afQuickField name=scoreMultiplier type="number"}}
+              {{/if}}
+
+            {{/if}}
           {{/if}}
 
           {{#if isType "text"}}

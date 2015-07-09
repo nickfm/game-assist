@@ -1,0 +1,55 @@
+<template name="player">
+  <div class="player list-group-item">
+    <div class="info clearfix">
+      {{#if templateFields}}
+        <div class="toggle collapsed" data-toggle="collapse" data-target="#pf-{{playerId}}">
+          <i class="glyphicon glyphicon-menu-down"></i>
+        </div>
+      {{/if}}
+      <div class="player-name">
+        <span>{{name}}</span>
+        <input type="text" class="form-control" value="{{name}}">
+      </div>
+      {{#if templateFields}}
+        <form class="template-fields collapse row clearfix" id="pf-{{playerId}}">
+          <div class="spacer"></div>
+          {{#each templateFields}}
+            {{> templateField}}
+          {{/each}}
+        </form>
+      {{/if}}
+    </div>
+    <div class="score-container">
+      <div class="score"><span>{{score.value}}</span></div>
+    </div>
+  </div>
+</template>
+
+<template name="templateField">
+  <div class="template-field col-sm-6 form-horizontal">
+    <div class="form-group">
+      <label for="{{key}}" class="col-xs-2 control-label">{{name}}</label>
+      <div class="col-xs-10">
+        {{#if isType 'number'}}
+          <input type="number" name="{{key}}" class="form-control" value="{{value}}" {{isDisabledToUser permission ../userId ../../created.by}}>
+        {{/if}}
+
+        {{#if isType 'text'}}
+          <input type="text" name="{{key}}" class="form-control" value="{{value}}" {{isDisabledToUser permission ../userId ../../created.by}}>
+        {{/if}}
+
+        {{#if isType 'counter'}}
+          <input type="number" name="{{key}}" class="form-control" data-use-for-score="{{useForScore}}" value="{{value}}" {{isDisabledToUser permission ../userId ../../created.by}}>
+        {{/if}}
+
+        {{#if isType 'choice'}}
+          <select name="{{key}}" class="form-control" {{isDisabledToUser permission ../userId ../../created.by}}>
+            {{#each choiceOptions}}
+              <option value="{{value}}" {{isSelected ../value value}}>{{label}}</option>
+            {{/each}}
+          </select>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</template>
